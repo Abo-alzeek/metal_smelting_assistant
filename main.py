@@ -1,3 +1,4 @@
+import math
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -14,9 +15,9 @@ def create_popup(**kwargs):
     for label, default_value in kwargs.items():
         tk.Label(popup, text=label.replace('_', ' ').title()).pack()
         entry = ttk.Entry(popup)
-        entry.insert(0, default_value)  # Insert default value if provided
+        entry.insert(0, default_value)  
         entry.pack()
-        entries[label] = entry  # Store reference to the entry widget
+        entries[label] = entry 
 
     def submit():
         nonlocal entries 
@@ -25,10 +26,9 @@ def create_popup(**kwargs):
     
     ttk.Button(popup, text="Submit", command=submit).pack(pady=20)
 
-    # Make the popup modal (optional)
     popup.grab_set()
     root.wait_window(popup)
-    return entries  # This will return after popup is destroyed
+    return entries
 
 def on_select(event):
     results = {}
@@ -52,60 +52,118 @@ def on_select(event):
     print(faces)
 
 def add_face():
-    # Create the Combobox
     options = ["Circle", "Rectangle", "Triangle", "Square", "Parallelogram"]
     combo = ttk.Combobox(root, values=options)
     combo.set("Select the shape of this face")  # Set default text
     combo['state'] = 'readonly'
     combo.pack(pady=10)
 
-    # Bind the selection event
     combo.bind("<<ComboboxSelected>>", on_select)
 
-def calculate_area(face, list) -> int:
+def calculate_area(face, list) -> float:
     area = 0.0
-
+    global minimum_dimension, maximum_area
+    
     if face == "Circle":
         for item in list:
-            area = max(area, 3.1415 * float(item['Radius']) * float(item['Radius']))
+            area = 3.1415 * float(item['Radius']) * float(item['Radius'])
+            if area > maximum_area:
+                maximum_area = area
+                minimum_dimension = item['Radius']
+
     elif face == "Rectangle":
         for item in list:
-            area = max(area, item['Width'] * item['Height'])
+            area = float(item['Width']) * float(item['Height'])
+            if area > maximum_area:
+                maximum_area = area
+                minimum_dimension = min(float(item['Width']), float(item['Height']))
+
     elif face == "Triangle":
         for item in list:
-            area = max(area, item['Base'] * item['Height'] / 2.0)
+            area = float(item['Base']) * float(item['Height']) / 2.0
+            if area > maximum_area:
+                maximum_area = area
+                minimum_dimension = min(float(item['Base']), float(item['Height']))
+
     elif face == "Square":
         for item in list:
-            area = max(area, item['Side'] * item['Side'])
+            area = float(item['Side']) * float(item['Side'])
+            if area > maximum_area:
+                maximum_area = area
+                minimum_dimension = min(float(item['Side']), float(item['Side']))
+
     elif face == "Parallelogram":
         for item in list:
-            area = max(area, 3.1415 * item['Base'] * item['Height'])
+            area = float(item['Base']) * float(item['Height'])
+            if area > maximum_area:
+                maximum_area = area
+                minimum_dimension = min(float(item['Base']), float(item['Height']))
 
     return area
 
+def get_right_temp(carbon) -> float:
+    pt1 = (0.8, 723)
+    pt2 = (2.0, 1147)
+    len = math.sqrt( (pt1[0] - pt2[0]) ** 2 + (pt1[1] - pt2[1]) ** 2 )
+    v1 = ( (pt2[0] - pt1[0]) / len, (pt2[1] - pt1[1]) / len)
+
+    diff = (carbon - 0.8) / v1[0]
+    temperature = pt1[1] * v1[1] * diff
+    
+    return temperature
+
+def get_left_temp(carbon) -> float:
+    pt1 = (0.8, 723)
+    pt2 = (0.0, 910)
+    len = math.sqrt( (pt1[0] - pt2[0]) ** 2 + (pt1[1] - pt2[1]) ** 2 )
+    v1 = ( (pt2[0] - pt1[0]) / len, (pt2[1] - pt1[1]) / len)
+
+    diff = (float(carbon) - 0.8) / v1[0]
+    temperature = pt1[1] * v1[1] * diff
+    
+    return temperature
+
 def submit():
     # validate the percentage entered
+    global temperature, minimum_dimension, maximum_area
+    carbon_value = float(carbon_entry.get())
 
-    global maximum_area
+    if float(carbon_value) > 2.0 or float(carbon_value) < 0.0:
+        messagebox.showerror("Error", "Invalid carbon percentage (0-2%)")
+        return    
+    elif float(carbon_value) > 0.8:
+        temperature = get_right_temp(carbon_value)
+    else:
+        temperature = get_left_temp(carbon_value)
+
     print(maximum_area)
     for face, list in faces.items():
-        maximum_area = max(maximum_area, int(calculate_area(face, list)))
+        calculate_area(face, list)
 
+    show_results(temperature, minimum_dimension)
     return
 
-# Create the main window
+def show_results(temperature, minimum_dimension):
+    messagebox.showinfo("Results", f"The temperature is: {temperature}.\n The minimum distance is: {minimum_dimension}.")
+
+# -----------------------------------------------------------------------------
+
 root = tk.Tk()
 root.title("Iron Smelting Assistance")
-root.geometry("800x600")  # width x height
+root.geometry("800x600")
 
 tk.Label(root, text="Enter Carbon Percentage").pack()
-entry = ttk.Entry(root).pack()
+carbon_entry = ttk.Entry(root)
+carbon_entry.pack()
 
 tk.Button(root, text="Add Face", command=add_face).pack(pady=10)
 tk.Button(root, text="Submit", command=submit).pack(pady=10)
 
+inf = 1e9
 faces = {}
+temperature = 0
 maximum_area = 0
+minimum_dimension = inf
 
 # Run the application
 root.mainloop()
