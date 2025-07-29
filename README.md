@@ -36,7 +36,7 @@ A comprehensive Python GUI application for calculating iron smelting and heat tr
 
 1. **Clone or download the project**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Abo-alzeek/metal_smelting_assistant.git
    cd metal_smelting_assistant
    ```
 
@@ -108,71 +108,12 @@ The application uses linear interpolation between known temperature-carbon perce
 - **Ellipse**: π × major_axis × minor_axis / 4
 - **Hexagon**: (3√3/2) × side_length²
 
-## File Structure
-```
-metal_smelting_assistant/
-├── main.py              # Main application file
-├── requirements.txt      # Python dependencies
-├── README.md           # This file
-└── prompt.txt          # Development notes
-```
-
 ## Dependencies
 
 The application requires the following Python packages:
 - `tkinter` - GUI framework (included with Python)
 - `matplotlib` - Chart creation and visualization
 - `math` - Mathematical calculations (built-in)
-
-## System Requirements
-
-- **Operating System**: Windows, macOS, or Linux
-- **Python Version**: 3.7 or higher
-- **Memory**: Minimum 512MB RAM
-- **Display**: 1024x768 or higher resolution
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Import Error for matplotlib**
-   ```bash
-   pip install matplotlib
-   ```
-
-2. **GUI not displaying properly**
-   - Ensure your system supports tkinter
-   - Try running on a different display resolution
-
-3. **Calculation errors**
-   - Verify all input values are positive numbers
-   - Check that carbon percentage is between 0-2%
-
-### Getting Help
-
-If you encounter issues:
-1. Check that all dependencies are installed correctly
-2. Verify Python version compatibility
-3. Review the console output for error messages
-
-## Contributing
-
-To contribute to this project:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Version History
-
-- **v1.0.0**: Initial release with basic functionality
-- **v1.1.0**: Added cooling parameter options and temperature chart
-- **v1.2.0**: Enhanced UI with Arabic labels and improved validation
 
 ---
 
