@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 class IronSmeltingAssistant:
     def __init__(self, root):
         self.root = root
-        self.root.title("Iron Smelting Assistant")
+        self.root.title("Steel Heat Treatment Assistant")
         self.root.geometry("700x600")
         self.root.resizable(True, True)
         
@@ -29,7 +29,7 @@ class IronSmeltingAssistant:
         main_frame.rowconfigure(1, weight=1)
         
         # Title
-        title_label = ttk.Label(main_frame, text="Iron Smelting Assistant", 
+        title_label = ttk.Label(main_frame, text="Steel Heat Treatment Assistant", 
                                font=("Arial", 16, "bold"))
         title_label.grid(row=0, column=0, pady=(0, 20))
         
